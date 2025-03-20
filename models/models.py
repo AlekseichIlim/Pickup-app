@@ -23,6 +23,7 @@ class Company(Base):
     addresses_street = Column(String, nullable=True)
     addresses_home = Column(String, nullable=True)
     addresses_comment = Column(String, nullable=True)
+    phone = Column(Integer, nullable=False)
 
 
 class Category(Base):
