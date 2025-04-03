@@ -46,3 +46,9 @@ class ProductCreate(StatesGroup):
         'ProductCreate:price': 'Введите цену блюда заново:',
         'ProductCreate:weight': 'Введите вес блюда заново:',
     }
+
+
+class DataCompany(StatesGroup):
+    view_data_company = State()
+    update_data_company = State()
+

@@ -10,7 +10,7 @@ from aiogram import F, Router
 
 import app_company.keyboards.company_keyboards as company_kb
 import app_company.requests as rq
-from app_company.fsm_states import CompanyRegister, CategoryCreate, ProductCreate
+from app_company.fsm_states import CompanyRegister, CategoryCreate, ProductCreate, DataCompany
 
 from aiogram.fsm.context import FSMContext
 from aiogram.types import ReplyKeyboardRemove
@@ -113,7 +113,7 @@ async def registration_phone(message: Message, state: FSMContext):
             f'Организация: "{data_company['name']}", {data_company['description']}\nАдрес: {data_company['city']}, улица '
             f'{data_company['addresses_street']} дом {data_company['addresses_home']}.\nТелефон: {data_company['phone']}'
         )
-    await message.answer('Ваша регистрация завершена.', reply_markup=admin_kb.menu_company)
+    await message.answer('Регистрация завершена.', reply_markup=admin_kb.menu_company)
     await state.clear()
     await rq.save_data_company(data_company)
 
@@ -125,13 +125,29 @@ async def view_all_companies(message: Message):
 
 
 @admin_company_router.callback_query(F.data.startswith('company_'))
-async def view_one_company(callback: CallbackQuery):
+async def view_one_company(callback: CallbackQuery, state: FSMContext):
 
     company_id = int(callback.data.split('_')[1])
     company = await rq.get_one_object(Company, company_id)
     categories = await rq.get_all_objects_foreignkey(CategoryProduct.company, company_id)
+    await state.update_data(company=company)
+    await state.set_state(DataCompany.view_data_company)
 
     if len(categories) != 0:
         await callback.message.answer(f'{company.name}', reply_markup=admin_kb.view_company_and_menu)
     else:
         await callback.message.answer(f'{company.name}', reply_markup=admin_kb.view_company_not_menu)
+
+
+@admin_company_router.message(DataCompany.view_data_company, F.text == 'Посмотреть данные')
+async def view_data_company(message: Message, state: FSMContext):
+    data = await state.get_data()
+    company = data['company']
+    await message.answer(f'Назавние: {company.name}\nОписание:{company.description}\nАдрес: {company.city}, улица '
+                         f'{company.addresses_street} дом {company.addresses_home}\nКоментарий:'
+                         f'{company.addresses_comment}\nТелефон: {company.phone}')
+
+
+@admin_company_router.message(F.text == 'Редактировать данные')
+async def update_data_company(message: Message, state: FSMContext):
+    await state.clear()
