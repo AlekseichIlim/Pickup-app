@@ -6,9 +6,9 @@ menu = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Регистраци�
                            resize_keyboard=True, input_field_placeholder="Нажмите кнопку 'Регистрация'"
 )
 
-menu_2 = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Назад'), KeyboardButton(text='Дальше')]
+create_menu = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text='Создать меню')]
                                      ],
-                           resize_keyboard=True, input_field_placeholder="Нажмите кнопку 'Регистрация'"
+                           resize_keyboard=True, input_field_placeholder="Нажмите кнопку 'Создать меню'"
 )
 
 back_button = ReplyKeyboardMarkup(keyboard=[[KeyboardButton(text=f'Назад')]], resize_keyboard=True)

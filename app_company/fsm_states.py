@@ -23,5 +23,26 @@ class CompanyRegister(StatesGroup):
 
     }
 
-class MenuCreate(StatesGroup):
-    pass
+
+class CategoryCreate(StatesGroup):
+    name_category = State()
+
+    text = {
+        'CategoryCreate:name_category': 'Введите название категории заново:',
+    }
+class ProductCreate(StatesGroup):
+    name_category = State()
+    name_product = State()
+    photo_product = State()
+    price = State()
+    ingredients = State()
+
+    weight = State()
+
+    text = {
+        'ProductCreate:name_product': 'Введите название блюда заново:',
+        'ProductCreate:photo_product': 'Загрузите фото блюда заново:',
+        'ProductCreate:ingredients': 'Введите ингредиенты блюда заново:',
+        'ProductCreate:price': 'Введите цену блюда заново:',
+        'ProductCreate:weight': 'Введите вес блюда заново:',
+    }
