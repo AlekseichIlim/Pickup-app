@@ -52,3 +52,14 @@ class DataCompany(StatesGroup):
     view_data_company = State()
     update_data_company = State()
 
+    text = {
+        'name': 'Введите название:',
+        'description': 'Введите описание:',
+        'city': 'Введите название города:',
+        'addresses_street': 'Введите название улицы:',
+        'addresses_home': 'Введите номер дома:',
+        'addresses_comment': 'Введите комментарий к адресу:',
+        'phone': 'Введите номер телефона:',
+
+    }
+

@@ -89,6 +89,19 @@ async def get_one_object(model, obj_id):
         return result.scalar_one_or_none()
 
 
+async def update_one_object(model, obj_id, name_field, item_field):
+    """ Изменяет объект модели """
+
+    async with AsyncSessionLocal() as session:
+        obj = select(model).where(model.id == obj_id)
+        result = await session.execute(obj)
+        obj_model = result.scalar_one()
+        setattr(obj_model, name_field, item_field)
+        await session.commit()
+        return obj_model
+
+
+
 async def get_all_objects_foreignkey(primary_class_and_field, item_field):
     """ Возвращает объекты класса по указанному вторичному ключу
     primary_class_and_field - класс с указанием поля: Product.category
@@ -104,6 +117,9 @@ data = {
 }
 
 # res = asyncio.run(get_all_objects_foreignkey(CategoryProduct.company, 2))
-
+#
 # res = asyncio.run(get_one_object(Company, 2))
-# print(res)
+# print(res.name)
+# asyncio.run(update_one_object(Company, 2, 'name', 'Шаурма2'))
+# res = asyncio.run(get_one_object(Company, 2))
+# print(res.name)

@@ -33,5 +33,20 @@ async def companies():
     keyboard = InlineKeyboardBuilder()
     for company in all_companies:
         keyboard.add(InlineKeyboardButton(text=company.name, callback_data=f'company_{company.id}'))
-    keyboard.add(InlineKeyboardButton(text='Назад', callback_data='to_back_main_menu'))
+    keyboard.add(InlineKeyboardButton(text='Назад\U00002b05', callback_data='to_back_main_menu'))
     return keyboard.adjust(2).as_markup()
+
+
+async def data_company():
+    keyboard = InlineKeyboardBuilder()
+    keyboard.add(InlineKeyboardButton(text='Название', callback_data='update_company_name'),
+                 InlineKeyboardButton(text='Описание', callback_data='update_company_description'),
+                 InlineKeyboardButton(text='Город', callback_data='update_company_city'),
+                 InlineKeyboardButton(text='Улицу', callback_data='update_company_addresses_street'),
+                 InlineKeyboardButton(text='Номер дома', callback_data='update_company_addresses_home'),
+                 InlineKeyboardButton(text='Комментарий', callback_data='update_company_addresses_comment'),
+                 InlineKeyboardButton(text='Телефон', callback_data='update_company_phone'),
+                 InlineKeyboardButton(text='Статус', callback_data='update_company_is_active'),
+                 InlineKeyboardButton(text='Назад\U00002b05', callback_data='back'),
+                 )
+    return keyboard.adjust(3).as_markup()

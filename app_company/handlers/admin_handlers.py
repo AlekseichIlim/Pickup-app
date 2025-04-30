@@ -126,7 +126,7 @@ async def view_all_companies(message: Message):
 
 @admin_company_router.callback_query(F.data.startswith('company_'))
 async def view_one_company(callback: CallbackQuery, state: FSMContext):
-
+    await callback.answer()
     company_id = int(callback.data.split('_')[1])
     company = await rq.get_one_object(Company, company_id)
     categories = await rq.get_all_objects_foreignkey(CategoryProduct.company, company_id)
@@ -143,11 +143,43 @@ async def view_one_company(callback: CallbackQuery, state: FSMContext):
 async def view_data_company(message: Message, state: FSMContext):
     data = await state.get_data()
     company = data['company']
-    await message.answer(f'Назавние: {company.name}\nОписание:{company.description}\nАдрес: {company.city}, улица '
-                         f'{company.addresses_street} дом {company.addresses_home}\nКоментарий:'
+    await message.answer(f'Назавние: {company.name}\nОписание: {company.description}\nАдрес: {company.city}, улица '
+                         f'{company.addresses_street} дом {company.addresses_home}\nКоментарий: '
                          f'{company.addresses_comment}\nТелефон: {company.phone}')
 
 
 @admin_company_router.message(F.text == 'Редактировать данные')
-async def update_data_company(message: Message, state: FSMContext):
+async def push_update_data_company(message: Message, state: FSMContext):
+    data = await state.get_data()
+    company = data['company']
+
+    await message.answer('Выберите что вы хотите изменить',
+                         reply_markup=ReplyKeyboardRemove())
+    await message.answer(f'Назавние: {company.name}\nОписание: {company.description}\nАдрес: {company.city}, улица '
+                         f'{company.addresses_street} дом {company.addresses_home}\nКоментарий: '
+                         f'{company.addresses_comment}\nТелефон: {company.phone}',
+                         reply_markup=await admin_kb.data_company())
+
+
+@admin_company_router.callback_query(F.data.startswith('update_company_'))
+async def push_update(callback: CallbackQuery, state: FSMContext):
+    await callback.answer()
+    name_field = callback.data.replace('update_company_', '')
+    await state.update_data(name_update_field=name_field)
+    await callback.message.answer(f'Ок, {DataCompany.text[name_field]}')
+    await state.set_state(DataCompany.update_data_company)
+
+
+@admin_company_router.message(DataCompany.update_data_company)
+async def update_data_field(message: Message, state: FSMContext):
+    data = await state.get_data()
+    company = data['company']
+    field = data['name_update_field']
+    item_field = message.text
     await state.clear()
+    company = await rq.update_one_object(Company, company.id, field, item_field)
+    await message.answer(f'Данные изменены\nНазавние: {company.name}\nОписание: {company.description}\nАдрес: {company.city}, улица '
+                         f'{company.addresses_street} дом {company.addresses_home}\nКоментарий: '
+                         f'{company.addresses_comment}\nТелефон: {company.phone}'
+                         reply_markup=)
+    #нужно создать клавиатуру возврата в главное меню, а также реализовать кнопку назад, вывод списка компаний с меню и без него
